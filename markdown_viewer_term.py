@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
-Terminal Markdown Viewer - A pager-style terminal viewer for markdown files
-Usage: python markdown_viewer_term.py <filename.md>
+Terminal Markdown Viewer - Renders markdown files with rich formatting for terminal display
+Usage:
+    python markdown_viewer_term.py <filename.md>
+    python markdown_viewer_term.py <filename.md> | less -R
+    python markdown_viewer_term.py <filename.md> | more
 """
 
 import sys
-import os
 from rich.console import Console
 from rich.markdown import Markdown
 
@@ -16,6 +18,7 @@ def main():
     # Check command line arguments
     if len(sys.argv) != 2:
         print("Usage: python markdown_viewer_term.py <filename.md>")
+        print("Tip: Pipe to a pager for scrolling: python markdown_viewer_term.py <file.md> | less -R")
         sys.exit(1)
 
     filename = sys.argv[1]
@@ -26,27 +29,21 @@ def main():
             md_content = f.read()
 
         # Create console with auto-detected width
-        console = Console()
+        # force_terminal=True ensures colors are output even when piped
+        console = Console(force_terminal=True)
 
         # Create Markdown object
         md = Markdown(md_content)
 
-        # Set PAGER environment variable to use less with proper flags
-        # -R: interpret ANSI color escape sequences
-        # -F: quit if entire file fits on one screen
-        # -X: don't clear screen on exit
-        os.environ['PAGER'] = 'less -RFX'
-
-        # Display with pager for scrolling
-        with console.pager(styles=True):
-            console.print(md)
+        # Print directly to stdout - users can pipe to their preferred pager
+        console.print(md)
 
     except FileNotFoundError:
-        console = Console()
+        console = Console(force_terminal=True, stderr=True)
         console.print(f"[bold red]Error:[/bold red] File '{filename}' not found.", style="red")
         sys.exit(1)
     except Exception as e:
-        console = Console()
+        console = Console(force_terminal=True, stderr=True)
         console.print(f"[bold red]Error:[/bold red] {str(e)}", style="red")
         sys.exit(1)
 

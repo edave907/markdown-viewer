@@ -80,24 +80,30 @@ The terminal version uses Rich library's built-in capabilities:
 
 **Console Configuration:**
 ```python
-console = Console()  # Auto-detects terminal width
+console = Console(force_terminal=True)  # Auto-detects terminal width, forces color output
 ```
 
-**Pager Mode:**
+**Direct Output (No Built-in Pager):**
 ```python
-with console.pager(styles=True):
-    console.print(md)
+console.print(md)  # Prints to stdout
 ```
 
-**Key Features:**
-- Automatic terminal width detection
-- Built-in pager with keyboard controls (arrows, page up/down, q to quit)
+**Key Design Decisions:**
+- **No built-in pager** - Output goes directly to stdout
+- **User choice** - Users can pipe to their preferred pager (less, more, most, etc.)
+- **Automatic paging** - Launcher script automatically pipes to `less -R` when available
+- **force_terminal=True** - Ensures ANSI color codes are output even when piped
 - Syntax highlighting for code blocks (automatic)
-- Graceful fallback for limited terminals
 - No custom HTML parsing needed - Rich handles everything
 
+**Launcher Script Behavior:**
+- Detects if output is to a terminal (`-t 1` test)
+- If to terminal and `less` is available: automatically pipes to `less -R`
+- If output is piped: passes through without modification
+- Users can override by manually piping to any pager
+
 **Error Handling:**
-- File not found errors with styled output
+- File not found errors with styled output to stderr
 - Generic exception handling with user-friendly messages
 - Exit codes (0 for success, 1 for errors)
 
@@ -427,8 +433,11 @@ The spec file configures:
 
 ### 2025-11-20 - Terminal Version Implementation
 - Added terminal-based markdown viewer using Rich library
-- Created `markdown_viewer_term.py` with pager functionality
-- Created `markdown-viewer-term` launcher script
+- Created `markdown_viewer_term.py` with direct stdout output
+- Created `markdown-viewer-term` launcher script with automatic pager detection
+- Removed built-in pager in favor of user choice (pipe to any pager)
+- Launcher script automatically uses `less -R` when output is to terminal
+- Set `force_terminal=True` to preserve colors when piped
 - Added `rich>=13.0.0` dependency to requirements.txt
 - Updated README.md with terminal version documentation
 - Updated DEVELOPMENT_NOTES.md with terminal implementation details

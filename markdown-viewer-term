@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Terminal markdown viewer launcher script
+# Usage: markdown-viewer-term <file.md>
+#        markdown-viewer-term <file.md> | less -R
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -16,5 +18,16 @@ if [ $? -ne 0 ]; then
     pip3 install markdown rich --user
 fi
 
-# Run the terminal viewer
-exec python3 "$SCRIPT_DIR/markdown_viewer_term.py" "$@"
+# If output is going to a terminal (not piped), automatically use less with color support
+if [ -t 1 ]; then
+    # Check if less is available
+    if command -v less &> /dev/null; then
+        python3 "$SCRIPT_DIR/markdown_viewer_term.py" "$@" | less -R
+    else
+        # Fallback to direct output if less is not available
+        python3 "$SCRIPT_DIR/markdown_viewer_term.py" "$@"
+    fi
+else
+    # Output is being piped, just run the viewer
+    python3 "$SCRIPT_DIR/markdown_viewer_term.py" "$@"
+fi

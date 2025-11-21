@@ -13,11 +13,12 @@ A lightweight markdown viewer with GitHub-like styling, available in both GUI (T
 - **Desktop window** - Resizable GUI window with scrollbars
 
 ### Terminal Version (Rich)
-- **Pager-style interface** - Similar to `less`, with keyboard navigation
+- **Flexible output** - Direct stdout output or pipe to any pager
 - **GitHub-like styling** - Professional rendering with colors and formatting
 - **Syntax highlighting** - Automatic code syntax highlighting in blocks
 - **Auto-width detection** - Adapts to terminal width automatically
-- **Fallback support** - Gracefully degrades for terminals without color support
+- **Pager integration** - Launcher script automatically uses `less -R` when available
+- **Pipe-friendly** - Works with any pager (less, more, most, etc.)
 - **Lightweight** - Pure Python with minimal dependencies
 
 ## Installation
@@ -58,19 +59,24 @@ python3 markdown_viewer.py sample_files/README.md
 ### Terminal Version
 
 ```bash
-# Using Python directly
+# Using Python directly (outputs to stdout)
 python3 markdown_viewer_term.py <filename.md>
 
-# Using the launcher script
+# Using the launcher script (automatically pipes to less if available)
 ./markdown-viewer-term <filename.md>
+
+# Manually pipe to your preferred pager
+python3 markdown_viewer_term.py <filename.md> | less -R
+python3 markdown_viewer_term.py <filename.md> | more
 
 # Example
 ./markdown-viewer-term sample_files/CHAT_PIPELINE_ARCHITECTURE.md
 ```
 
-**Terminal Navigation:**
+**Terminal Navigation (when using a pager):**
 - Use arrow keys, Page Up/Down, or Space to scroll
-- Press `q` to quit
+- Press `q` to quit (in less)
+- The launcher script automatically uses `less -R` if available and output is not piped
 
 ### Compiled Binary
 
