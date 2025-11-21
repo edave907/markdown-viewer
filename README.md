@@ -1,6 +1,6 @@
-# Markdown Viewer
+# Markdown & Mermaid Viewer
 
-A lightweight markdown viewer with GitHub-like styling, available in both GUI (Tkinter) and terminal (Rich) versions.
+A lightweight viewer collection for markdown files and Mermaid diagrams, with GitHub-like styling. Available in both GUI (Tkinter) and terminal (Rich) versions.
 
 ## Features
 
@@ -21,6 +21,14 @@ A lightweight markdown viewer with GitHub-like styling, available in both GUI (T
 - **Pipe-friendly** - Works with any pager (less, more, most, etc.)
 - **Lightweight** - Pure Python with minimal dependencies
 
+### Mermaid Diagram Viewer (Terminal)
+- **Syntax highlighting** - Colorized Mermaid source code display
+- **Online rendering** - Generates URLs for viewing diagrams via mermaid.ink
+- **Multiple formats** - Provides both PNG and SVG URLs
+- **Download instructions** - Built-in curl commands for saving diagrams
+- **All diagram types** - Supports flowcharts, sequence diagrams, class diagrams, state diagrams, Gantt charts, and more
+- **Pure Python** - No Node.js or external binaries required
+
 ## Installation
 
 ### Requirements
@@ -29,6 +37,7 @@ A lightweight markdown viewer with GitHub-like styling, available in both GUI (T
 - Tkinter (usually included with Python) - for GUI version
 - markdown library
 - rich library - for terminal version
+- mermaid-py library - for Mermaid diagram viewer
 
 ### Setup
 
@@ -39,6 +48,7 @@ pip install -r requirements.txt
 # Make the launcher scripts executable (optional)
 chmod +x markdown-viewer
 chmod +x markdown-viewer-term
+chmod +x mermaid-viewer-term
 ```
 
 ## Usage
@@ -77,6 +87,29 @@ python3 markdown_viewer_term.py <filename.md> | more
 - Use arrow keys, Page Up/Down, or Space to scroll
 - Press `q` to quit (in less)
 - The launcher script automatically uses `less -R` if available and output is not piped
+
+### Mermaid Diagram Viewer
+
+```bash
+# Using Python directly (outputs to stdout)
+python3 mermaid_viewer_term.py <filename.mmd>
+
+# Using the launcher script (automatically pipes to less if available)
+./mermaid-viewer-term <filename.mmd>
+
+# Example
+./mermaid-viewer-term sample_files/sample_flowchart.mmd
+```
+
+**What you get:**
+- Syntax-highlighted Mermaid source code
+- PNG and SVG URLs for viewing the rendered diagram
+- Ready-to-use curl commands for downloading diagrams
+
+**To view the diagram:**
+1. Copy the PNG or SVG URL and open in a browser
+2. Or use the provided curl command to download the image
+3. Diagrams are rendered via mermaid.ink (online service)
 
 ### Compiled Binary
 
@@ -157,6 +190,20 @@ The compiled binary will be in the `dist/` directory.
 - Graceful fallback for limited terminals
 - Unicode box-drawing character support
 
+### Mermaid Diagram Viewer
+
+**Rendering:**
+- Uses mermaid-py library to generate mermaid.ink URLs
+- Syntax highlighting for Mermaid source code via Rich
+- Online rendering via mermaid.ink service (no local rendering)
+- Supports all Mermaid diagram types
+
+**Output:**
+- Displays formatted source code with line numbers
+- Provides PNG and SVG URLs for browser viewing
+- Includes ready-to-use curl download commands
+- No external binaries or Node.js required
+
 ## Testing
 
 Sample markdown files are provided in the `sample_files/` directory for testing various rendering scenarios, including:
@@ -164,6 +211,10 @@ Sample markdown files are provided in the `sample_files/` directory for testing 
 - Complex ASCII art diagrams
 - Technical documentation
 - Scientific papers
+
+Sample Mermaid diagram files (`.mmd`) are also included:
+- Flowcharts (`sample_flowchart.mmd`)
+- Sequence diagrams (`sample_sequence.mmd`)
 
 ## Known Limitations
 
@@ -185,15 +236,19 @@ Sample markdown files are provided in the `sample_files/` directory for testing 
 ```
 markdown_viewer/
 ├── markdown_viewer.py      # Main GUI application (Tkinter)
-├── markdown_viewer_term.py # Terminal application (Rich)
+├── markdown_viewer_term.py # Terminal markdown viewer (Rich)
+├── mermaid_viewer_term.py  # Terminal Mermaid diagram viewer (Rich)
 ├── markdown-viewer         # GUI launcher script
-├── markdown-viewer-term    # Terminal launcher script
+├── markdown-viewer-term    # Markdown terminal launcher script
+├── mermaid-viewer-term     # Mermaid terminal launcher script
 ├── markdown-viewer.spec    # PyInstaller configuration
 ├── requirements.txt        # Python dependencies
 ├── README.md              # This file
 ├── DEVELOPMENT_NOTES.md   # Technical implementation notes
 ├── TERMINAL_VIEWER_IMPLEMENTATION_PLAN.md  # Terminal version design
-├── sample_files/          # Test markdown files
+├── sample_files/          # Test markdown and Mermaid files
+│   ├── *.md               # Markdown test files
+│   └── *.mmd              # Mermaid diagram files
 ├── build/                 # PyInstaller build artifacts
 └── dist/                  # Compiled binaries
 ```

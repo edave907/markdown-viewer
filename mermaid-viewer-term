@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Mermaid diagram viewer launcher script
+# Usage: mermaid-viewer-term <file.mmd>
+#        mermaid-viewer-term <file.mmd> | less -R
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check if Python is available
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python 3 is required but not installed."
+    exit 1
+fi
+
+# Check if required libraries are installed
+python3 -c "import markdown, rich, mermaid" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "Installing required dependencies..."
+    pip3 install markdown rich mermaid-py --user
+fi
+
+# If output is going to a terminal (not piped), automatically use less with color support
+if [ -t 1 ]; then
+    # Check if less is available
+    if command -v less &> /dev/null; then
+        python3 "$SCRIPT_DIR/mermaid_viewer_term.py" "$@" | less -R
+    else
+        # Fallback to direct output if less is not available
+        python3 "$SCRIPT_DIR/mermaid_viewer_term.py" "$@"
+    fi
+else
+    # Output is being piped, just run the viewer
+    python3 "$SCRIPT_DIR/mermaid_viewer_term.py" "$@"
+fi
