@@ -2,29 +2,52 @@
 
 Technical documentation for developers and AI assistants working on the markdown viewer project.
 
-**Last Updated**: 2025-11-08
+**Last Updated**: 2025-11-20
 
 ---
 
+## Project Versions
+
+This project includes two versions of the markdown viewer:
+
+1. **GUI Version** (`markdown_viewer.py`) - Tkinter-based desktop application
+2. **Terminal Version** (`markdown_viewer_term.py`) - Rich-based terminal pager
+
 ## Architecture Overview
 
-The markdown viewer is built using three main components:
+### GUI Version (Tkinter)
+
+The GUI markdown viewer is built using three main components:
 
 1. **Markdown to HTML Conversion** - Uses the Python `markdown` library to convert markdown text to HTML
 2. **HTML Parser** - Custom `MarkdownRenderer` class extends `HTMLParser` to parse the generated HTML
 3. **Tkinter Text Widget** - Displays the parsed content with styled tags
 
-### Data Flow
-
+**Data Flow:**
 ```
 Markdown File → markdown.markdown() → HTML → MarkdownRenderer → Tkinter Text Widget
 ```
 
+### Terminal Version (Rich)
+
+The terminal markdown viewer uses a simpler architecture:
+
+1. **Markdown Parsing** - Rich library's built-in `Markdown` class handles parsing and rendering
+2. **Console Output** - `Console` with pager mode for scrollable display
+3. **Auto-width Detection** - Automatically adapts to terminal width
+
+**Data Flow:**
+```
+Markdown File → Rich Markdown → Console.pager() → Terminal Display
+```
+
 ## Key Implementation Details
 
-### MarkdownRenderer Class
+### GUI Version Implementation
 
-The `MarkdownRenderer` class (lines 15-122) is a custom HTML parser that:
+#### MarkdownRenderer Class
+
+The `MarkdownRenderer` class (markdown_viewer.py:15-122) is a custom HTML parser that:
 - Tracks parsing state (current tags, list levels, code block status)
 - Converts HTML tags to Tkinter text widget tags
 - Buffers code block content for batch insertion
@@ -36,7 +59,7 @@ The `MarkdownRenderer` class (lines 15-122) is a custom HTML parser that:
 - `in_code_block` - Flag for code block processing
 - `code_buffer` - Accumulates code block content before insertion
 
-### Text Widget Configuration
+#### Text Widget Configuration
 
 The Tkinter `ScrolledText` widget is configured with specific settings critical for proper rendering:
 
@@ -48,6 +71,35 @@ wrap=tk.NONE  # CRITICAL: Prevents word wrapping
 - ASCII art and diagrams require exact character positioning
 - Word wrapping breaks box-drawing characters (┌─┐│└┘)
 - Long lines get horizontal scrollbars instead of wrapping
+
+### Terminal Version Implementation
+
+#### Rich Library Integration
+
+The terminal version uses Rich library's built-in capabilities:
+
+**Console Configuration:**
+```python
+console = Console()  # Auto-detects terminal width
+```
+
+**Pager Mode:**
+```python
+with console.pager(styles=True):
+    console.print(md)
+```
+
+**Key Features:**
+- Automatic terminal width detection
+- Built-in pager with keyboard controls (arrows, page up/down, q to quit)
+- Syntax highlighting for code blocks (automatic)
+- Graceful fallback for limited terminals
+- No custom HTML parsing needed - Rich handles everything
+
+**Error Handling:**
+- File not found errors with styled output
+- Generic exception handling with user-friendly messages
+- Exit codes (0 for success, 1 for errors)
 
 ## ASCII Art Rendering - Critical Fixes
 
@@ -323,9 +375,13 @@ for tag in self.text.tag_names():
 
 ## Dependencies
 
-### Required
-- `markdown` - Markdown to HTML conversion
+### Required (GUI Version)
+- `markdown>=3.4.0` - Markdown to HTML conversion
 - `tkinter` - GUI (usually included with Python)
+
+### Required (Terminal Version)
+- `markdown>=3.4.0` - Markdown parsing (used by Rich)
+- `rich>=13.0.0` - Terminal rendering and pager functionality
 
 ### Optional (for building)
 - `pyinstaller` - Create standalone executables
@@ -353,10 +409,14 @@ The spec file configures:
 ## Git and Version Control
 
 ### Important Files
-- `markdown_viewer.py` - Core application (track changes carefully)
+- `markdown_viewer.py` - Core GUI application (track changes carefully)
+- `markdown_viewer_term.py` - Terminal application
+- `markdown-viewer` - GUI launcher script
+- `markdown-viewer-term` - Terminal launcher script
 - `requirements.txt` - Dependencies
 - `README.md` - User documentation
 - `DEVELOPMENT_NOTES.md` - This file
+- `TERMINAL_VIEWER_IMPLEMENTATION_PLAN.md` - Terminal version design
 
 ### Generated Files (can be ignored)
 - `build/` - PyInstaller artifacts
@@ -364,6 +424,16 @@ The spec file configures:
 - `__pycache__/` - Python bytecode
 
 ## Changelog
+
+### 2025-11-20 - Terminal Version Implementation
+- Added terminal-based markdown viewer using Rich library
+- Created `markdown_viewer_term.py` with pager functionality
+- Created `markdown-viewer-term` launcher script
+- Added `rich>=13.0.0` dependency to requirements.txt
+- Updated README.md with terminal version documentation
+- Updated DEVELOPMENT_NOTES.md with terminal implementation details
+- Tested with sample files including ASCII art diagrams
+- Both GUI and terminal versions now available
 
 ### 2025-11-08 - ASCII Art Rendering Fixes
 - Removed `codehilite` extension to prevent span fragmentation

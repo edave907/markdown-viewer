@@ -1,14 +1,23 @@
 # Markdown Viewer
 
-A lightweight, desktop markdown viewer with GitHub-like styling built using Python and Tkinter.
+A lightweight markdown viewer with GitHub-like styling, available in both GUI (Tkinter) and terminal (Rich) versions.
 
 ## Features
 
+### GUI Version (Tkinter)
 - **GitHub-like styling** - Clean, professional rendering that matches GitHub's markdown display
 - **Rich markdown support** - Headers, bold, italic, code blocks, lists, blockquotes, tables, and more
 - **ASCII art rendering** - Properly displays ASCII diagrams and box-drawing characters without wrapping or spacing issues
 - **Syntax-aware code blocks** - Monospace font with gray background for code snippets
 - **Horizontal scrolling** - Long lines don't wrap, maintaining formatting integrity
+- **Desktop window** - Resizable GUI window with scrollbars
+
+### Terminal Version (Rich)
+- **Pager-style interface** - Similar to `less`, with keyboard navigation
+- **GitHub-like styling** - Professional rendering with colors and formatting
+- **Syntax highlighting** - Automatic code syntax highlighting in blocks
+- **Auto-width detection** - Adapts to terminal width automatically
+- **Fallback support** - Gracefully degrades for terminals without color support
 - **Lightweight** - Pure Python with minimal dependencies
 
 ## Installation
@@ -16,8 +25,9 @@ A lightweight, desktop markdown viewer with GitHub-like styling built using Pyth
 ### Requirements
 
 - Python 3.6+
-- Tkinter (usually included with Python)
+- Tkinter (usually included with Python) - for GUI version
 - markdown library
+- rich library - for terminal version
 
 ### Setup
 
@@ -25,13 +35,14 @@ A lightweight, desktop markdown viewer with GitHub-like styling built using Pyth
 # Install dependencies
 pip install -r requirements.txt
 
-# Make the launcher executable (optional)
+# Make the launcher scripts executable (optional)
 chmod +x markdown-viewer
+chmod +x markdown-viewer-term
 ```
 
 ## Usage
 
-### Command Line
+### GUI Version
 
 ```bash
 # Using Python directly
@@ -43,6 +54,23 @@ python3 markdown_viewer.py <filename.md>
 # Example
 python3 markdown_viewer.py sample_files/README.md
 ```
+
+### Terminal Version
+
+```bash
+# Using Python directly
+python3 markdown_viewer_term.py <filename.md>
+
+# Using the launcher script
+./markdown-viewer-term <filename.md>
+
+# Example
+./markdown-viewer-term sample_files/CHAT_PIPELINE_ARCHITECTURE.md
+```
+
+**Terminal Navigation:**
+- Use arrow keys, Page Up/Down, or Space to scroll
+- Press `q` to quit
 
 ### Compiled Binary
 
@@ -90,27 +118,38 @@ The compiled binary will be in the `dist/` directory.
 
 ## Technical Details
 
-### Font Configuration
+### GUI Version
 
+**Font Configuration:**
 - **Body text**: DejaVu Sans, size 11
 - **Code/monospace**: DejaVu Sans Mono, size 10
 - **Headers**: Sized from 11pt (H6) to 24pt (H1)
 
-### Text Widget Settings
-
+**Text Widget Settings:**
 - **Wrap mode**: NONE - Prevents text wrapping that would break ASCII art
 - **Horizontal scrolling**: Enabled for long lines
 - **Background**: White (#ffffff)
 - **Foreground**: GitHub dark gray (#24292e)
 
-### Markdown Extensions
-
-The viewer uses the following Python markdown extensions:
+**Markdown Extensions:**
 - `extra` - Adds support for tables, fenced code, and more
 - `tables` - Table rendering
 - `fenced_code` - Triple-backtick code blocks
 
 **Note**: The `codehilite` extension is intentionally NOT used as it breaks ASCII art rendering by inserting HTML spans.
+
+### Terminal Version
+
+**Rendering:**
+- Uses Rich library's built-in Markdown renderer
+- Automatic syntax highlighting for code blocks
+- Auto-detects terminal width for optimal display
+- Pager mode with standard keyboard controls
+
+**Terminal Compatibility:**
+- Full color support on modern terminals
+- Graceful fallback for limited terminals
+- Unicode box-drawing character support
 
 ## Testing
 
@@ -122,22 +161,32 @@ Sample markdown files are provided in the `sample_files/` directory for testing 
 
 ## Known Limitations
 
+### GUI Version
 - Read-only display (no editing capability)
 - No dark mode
 - No file browser UI (must specify file via command line)
 - Links are styled but not clickable
 - Images are not rendered
 
+### Terminal Version
+- Read-only display (no editing capability)
+- Links are styled but not clickable
+- Images are not rendered
+- Requires terminal with Unicode support for best experience
+
 ## Project Structure
 
 ```
 markdown_viewer/
-├── markdown_viewer.py      # Main application
-├── markdown-viewer         # Launcher script
+├── markdown_viewer.py      # Main GUI application (Tkinter)
+├── markdown_viewer_term.py # Terminal application (Rich)
+├── markdown-viewer         # GUI launcher script
+├── markdown-viewer-term    # Terminal launcher script
 ├── markdown-viewer.spec    # PyInstaller configuration
 ├── requirements.txt        # Python dependencies
 ├── README.md              # This file
 ├── DEVELOPMENT_NOTES.md   # Technical implementation notes
+├── TERMINAL_VIEWER_IMPLEMENTATION_PLAN.md  # Terminal version design
 ├── sample_files/          # Test markdown files
 ├── build/                 # PyInstaller build artifacts
 └── dist/                  # Compiled binaries

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Terminal markdown viewer launcher script
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check if Python is available
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python 3 is required but not installed."
+    exit 1
+fi
+
+# Check if required libraries are installed
+python3 -c "import markdown, rich" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "Installing required dependencies..."
+    pip3 install markdown rich --user
+fi
+
+# Run the terminal viewer
+exec python3 "$SCRIPT_DIR/markdown_viewer_term.py" "$@"
