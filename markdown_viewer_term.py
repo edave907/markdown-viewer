@@ -5,6 +5,7 @@ Usage: python markdown_viewer_term.py <filename.md>
 """
 
 import sys
+import os
 from rich.console import Console
 from rich.markdown import Markdown
 
@@ -29,6 +30,12 @@ def main():
 
         # Create Markdown object
         md = Markdown(md_content)
+
+        # Set PAGER environment variable to use less with proper flags
+        # -R: interpret ANSI color escape sequences
+        # -F: quit if entire file fits on one screen
+        # -X: don't clear screen on exit
+        os.environ['PAGER'] = 'less -RFX'
 
         # Display with pager for scrolling
         with console.pager(styles=True):
