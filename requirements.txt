@@ -1,3 +1,4 @@
 markdown>=3.4.0
 rich>=13.0.0
 mermaid-py>=0.4.0
+Pillow>=9.0.0

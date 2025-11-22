@@ -4,7 +4,7 @@ A lightweight viewer collection for markdown files and Mermaid diagrams, with Gi
 
 ## Features
 
-### GUI Version (Tkinter)
+### Markdown GUI Version (Tkinter)
 - **GitHub-like styling** - Clean, professional rendering that matches GitHub's markdown display
 - **Rich markdown support** - Headers, bold, italic, code blocks, lists, blockquotes, tables, and more
 - **ASCII art rendering** - Properly displays ASCII diagrams and box-drawing characters without wrapping or spacing issues
@@ -21,7 +21,14 @@ A lightweight viewer collection for markdown files and Mermaid diagrams, with Gi
 - **Pipe-friendly** - Works with any pager (less, more, most, etc.)
 - **Lightweight** - Pure Python with minimal dependencies
 
-### Mermaid Diagram Viewer (Terminal)
+### Mermaid Diagram Viewer - GUI (Tkinter)
+- **Click and view** - Double-click `.mmd` files to instantly view diagrams
+- **Auto-download** - Fetches rendered diagram from mermaid.ink automatically
+- **Scrollable canvas** - View large diagrams with horizontal and vertical scrolling
+- **All diagram types** - Supports flowcharts, sequence diagrams, class diagrams, state diagrams, Gantt charts, and more
+- **Simple and fast** - Opens in seconds, no complex setup required
+
+### Mermaid Diagram Viewer - Terminal (Rich)
 - **Syntax highlighting** - Colorized Mermaid source code display
 - **Online rendering** - Generates URLs for viewing diagrams via mermaid.ink
 - **Multiple formats** - Provides both PNG and SVG URLs
@@ -34,10 +41,11 @@ A lightweight viewer collection for markdown files and Mermaid diagrams, with Gi
 ### Requirements
 
 - Python 3.6+
-- Tkinter (usually included with Python) - for GUI version
-- markdown library
-- rich library - for terminal version
-- mermaid-py library - for Mermaid diagram viewer
+- Tkinter (usually included with Python) - for GUI versions
+- markdown library - for markdown rendering
+- rich library - for terminal versions
+- mermaid-py library - for Mermaid diagram viewers
+- Pillow (PIL) library - for Mermaid GUI viewer image display
 
 ### Setup
 
@@ -48,6 +56,7 @@ pip install -r requirements.txt
 # Make the launcher scripts executable (optional)
 chmod +x markdown-viewer
 chmod +x markdown-viewer-term
+chmod +x mermaid-viewer
 chmod +x mermaid-viewer-term
 ```
 
@@ -88,7 +97,32 @@ python3 markdown_viewer_term.py <filename.md> | more
 - Press `q` to quit (in less)
 - The launcher script automatically uses `less -R` if available and output is not piped
 
-### Mermaid Diagram Viewer
+### Mermaid Diagram Viewer - GUI
+
+```bash
+# Using Python directly
+python3 mermaid_viewer_gui.py <filename.mmd>
+
+# Using the launcher script
+./mermaid-viewer <filename.mmd>
+
+# Examples
+./mermaid-viewer sample_files/sample_flowchart.mmd
+./mermaid-viewer sample_files/sample_sequence.mmd
+```
+
+**What happens:**
+1. Window opens with "Loading diagram..." message
+2. Diagram is fetched from mermaid.ink and displayed
+3. Scroll to view large diagrams
+4. Close window when done
+
+**Perfect for:**
+- Quick viewing of `.mmd` files
+- File manager integration (double-click to view)
+- Presentations and documentation review
+
+### Mermaid Diagram Viewer - Terminal
 
 ```bash
 # Using Python directly (outputs to stdout)
@@ -231,21 +265,84 @@ Sample Mermaid diagram files (`.mmd`) are also included:
 - Images are not rendered
 - Requires terminal with Unicode support for best experience
 
+### Mermaid GUI Viewer
+- Requires internet connection (uses mermaid.ink service)
+- Diagrams rendered by external service
+- No offline viewing capability
+- Read-only display
+
+## File Association (Double-Click to Open)
+
+### Linux (GNOME/Nautilus)
+
+To make `.mmd` files open with the Mermaid GUI viewer when double-clicked:
+
+1. **Right-click any `.mmd` file** → **Properties**
+2. **Open With** tab → **Add Application**
+3. **Use a custom command:**
+   ```
+   /full/path/to/markdown_viewer/mermaid-viewer %f
+   ```
+   Replace `/full/path/to/` with your actual path
+4. **Set as default** and click OK
+
+**Or create a .desktop file:**
+
+```bash
+mkdir -p ~/.local/share/applications
+
+cat > ~/.local/share/applications/mermaid-viewer.desktop <<EOF
+[Desktop Entry]
+Type=Application
+Name=Mermaid Diagram Viewer
+Comment=View Mermaid diagrams
+Exec=/full/path/to/markdown_viewer/mermaid-viewer %f
+Terminal=false
+Categories=Graphics;Viewer;
+MimeType=text/plain;
+EOF
+
+# Update desktop database
+update-desktop-database ~/.local/share/applications
+```
+
+### Linux (KDE/Dolphin)
+
+1. **Right-click `.mmd` file** → **Properties**
+2. **File Association** → **Add**
+3. Browse to `mermaid-viewer` script
+4. Set as default
+
+### macOS
+
+Create a simple AppleScript application:
+
+```applescript
+on run {input}
+    do shell script "/full/path/to/markdown_viewer/mermaid-viewer " & quoted form of POSIX path of (item 1 of input)
+end run
+```
+
+Save as Application, then right-click `.mmd` file → Get Info → Open with → Select your app
+
 ## Project Structure
 
 ```
 markdown_viewer/
-├── markdown_viewer.py      # Main GUI application (Tkinter)
-├── markdown_viewer_term.py # Terminal markdown viewer (Rich)
-├── mermaid_viewer_term.py  # Terminal Mermaid diagram viewer (Rich)
-├── markdown-viewer         # GUI launcher script
+├── markdown_viewer.py      # Markdown GUI application (Tkinter)
+├── markdown_viewer_term.py # Markdown terminal viewer (Rich)
+├── mermaid_viewer_gui.py   # Mermaid GUI viewer (Tkinter)
+├── mermaid_viewer_term.py  # Mermaid terminal viewer (Rich)
+├── markdown-viewer         # Markdown GUI launcher script
 ├── markdown-viewer-term    # Markdown terminal launcher script
+├── mermaid-viewer          # Mermaid GUI launcher script
 ├── mermaid-viewer-term     # Mermaid terminal launcher script
 ├── markdown-viewer.spec    # PyInstaller configuration
 ├── requirements.txt        # Python dependencies
 ├── README.md              # This file
 ├── DEVELOPMENT_NOTES.md   # Technical implementation notes
-├── TERMINAL_VIEWER_IMPLEMENTATION_PLAN.md  # Terminal version design
+├── TERMINAL_VIEWER_IMPLEMENTATION_PLAN.md
+├── PROJECT_CHECKPOINT.md  # Project state for resumption
 ├── sample_files/          # Test markdown and Mermaid files
 │   ├── *.md               # Markdown test files
 │   └── *.mmd              # Mermaid diagram files

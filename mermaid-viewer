@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Mermaid diagram GUI viewer launcher script
+# Usage: mermaid-viewer <file.mmd>
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check if Python is available
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python 3 is required but not installed."
+    exit 1
+fi
+
+# Check if required libraries are installed
+python3 -c "import markdown, rich, mermaid, PIL" 2>/dev/null
+if [ $? -ne 0 ]; then
+    echo "Installing required dependencies..."
+    pip3 install markdown rich mermaid-py Pillow --user
+fi
+
+# Run the GUI viewer
+exec python3 "$SCRIPT_DIR/mermaid_viewer_gui.py" "$@"
