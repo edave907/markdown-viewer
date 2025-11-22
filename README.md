@@ -273,7 +273,21 @@ Sample Mermaid diagram files (`.mmd`) are also included:
 
 ## File Association (Double-Click to Open)
 
-### Linux (GNOME/Nautilus)
+### Quick Install (Linux)
+
+**Easiest way - use the installer script:**
+
+```bash
+./install-desktop-files.sh
+```
+
+This creates `.desktop` files for both viewers, allowing you to:
+- Double-click `.md` files to open in Markdown Viewer
+- Double-click `.mmd` files to open in Mermaid Diagram Viewer
+
+### Manual Setup
+
+#### Linux (GNOME/Nautilus)
 
 To make `.mmd` files open with the Mermaid GUI viewer when double-clicked:
 
@@ -286,25 +300,7 @@ To make `.mmd` files open with the Mermaid GUI viewer when double-clicked:
    Replace `/full/path/to/` with your actual path
 4. **Set as default** and click OK
 
-**Or create a .desktop file:**
-
-```bash
-mkdir -p ~/.local/share/applications
-
-cat > ~/.local/share/applications/mermaid-viewer.desktop <<EOF
-[Desktop Entry]
-Type=Application
-Name=Mermaid Diagram Viewer
-Comment=View Mermaid diagrams
-Exec=/full/path/to/markdown_viewer/mermaid-viewer %f
-Terminal=false
-Categories=Graphics;Viewer;
-MimeType=text/plain;
-EOF
-
-# Update desktop database
-update-desktop-database ~/.local/share/applications
-```
+**Or manually create .desktop files** (see `install-desktop-files.sh` for reference)
 
 ### Linux (KDE/Dolphin)
 
@@ -337,6 +333,7 @@ markdown_viewer/
 ├── markdown-viewer-term    # Markdown terminal launcher script
 ├── mermaid-viewer          # Mermaid GUI launcher script
 ├── mermaid-viewer-term     # Mermaid terminal launcher script
+├── install-desktop-files.sh # Install .desktop files for double-click
 ├── markdown-viewer.spec    # PyInstaller configuration
 ├── requirements.txt        # Python dependencies
 ├── README.md              # This file
