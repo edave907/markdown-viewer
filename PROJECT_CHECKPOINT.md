@@ -1,7 +1,7 @@
 # Project Checkpoint - Markdown & Mermaid Viewer
 
-**Date:** 2025-11-20
-**Status:** Stable - Ready for Future Development
+**Date:** 2025-11-22
+**Status:** Feature Complete - Production Ready
 **Repository:** github.com:edave907/markdown-viewer.git
 **Branch:** main
 
@@ -9,7 +9,7 @@
 
 ## Project Overview
 
-A collection of lightweight viewers for markdown files and Mermaid diagrams, with GitHub-like styling. Available in both GUI (Tkinter) and terminal (Rich) versions.
+A complete collection of lightweight viewers for markdown files and Mermaid diagrams, with GitHub-like styling. Available in both GUI (Tkinter) and terminal (Rich) versions. **Includes file association support for double-click viewing.**
 
 ### Current Features
 
@@ -20,6 +20,7 @@ A collection of lightweight viewers for markdown files and Mermaid diagrams, wit
 - Custom HTML parser converting to Tkinter tags
 - **File:** `markdown_viewer.py`
 - **Launcher:** `markdown-viewer`
+- **File Association:** Via `.desktop` file
 
 #### 2. Markdown Viewer - Terminal Version (Rich)
 - Direct stdout output (pipe-friendly)
@@ -30,7 +31,17 @@ A collection of lightweight viewers for markdown files and Mermaid diagrams, wit
 - **File:** `markdown_viewer_term.py`
 - **Launcher:** `markdown-viewer-term`
 
-#### 3. Mermaid Diagram Viewer - Terminal Version (Rich)
+#### 3. Mermaid Diagram Viewer - GUI Version (Tkinter) **NEW!**
+- Click and view - double-click `.mmd` files to open
+- Auto-downloads rendered diagram from mermaid.ink
+- Scrollable canvas for large diagrams
+- Loading message while fetching
+- Supports all Mermaid diagram types
+- **File:** `mermaid_viewer_gui.py`
+- **Launcher:** `mermaid-viewer`
+- **File Association:** Via `.desktop` file
+
+#### 4. Mermaid Diagram Viewer - Terminal Version (Rich)
 - Syntax-highlighted Mermaid source code display
 - Generates mermaid.ink URLs (PNG and SVG)
 - Ready-to-use curl download commands
@@ -39,18 +50,27 @@ A collection of lightweight viewers for markdown files and Mermaid diagrams, wit
 - **File:** `mermaid_viewer_term.py`
 - **Launcher:** `mermaid-viewer-term`
 
+#### 5. Desktop Integration **NEW!**
+- One-command installation script
+- Automatic file association setup
+- Double-click `.md` and `.mmd` files to view
+- **File:** `install-desktop-files.sh`
+
 ---
 
 ## Project Structure
 
 ```
 markdown_viewer/
-├── markdown_viewer.py          # Main GUI application (Tkinter)
-├── markdown_viewer_term.py     # Terminal markdown viewer (Rich)
-├── mermaid_viewer_term.py      # Terminal Mermaid diagram viewer (Rich)
-├── markdown-viewer             # GUI launcher script
+├── markdown_viewer.py          # Markdown GUI application (Tkinter)
+├── markdown_viewer_term.py     # Markdown terminal viewer (Rich)
+├── mermaid_viewer_gui.py       # Mermaid GUI viewer (Tkinter)
+├── mermaid_viewer_term.py      # Mermaid terminal viewer (Rich)
+├── markdown-viewer             # Markdown GUI launcher script
 ├── markdown-viewer-term        # Markdown terminal launcher script
+├── mermaid-viewer              # Mermaid GUI launcher script
 ├── mermaid-viewer-term         # Mermaid terminal launcher script
+├── install-desktop-files.sh    # Desktop file installer
 ├── markdown-viewer.spec        # PyInstaller configuration
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # User documentation
@@ -74,24 +94,46 @@ markdown_viewer/
 markdown>=3.4.0
 rich>=13.0.0
 mermaid-py>=0.4.0
+Pillow>=9.0.0
 ```
 
 ### System Requirements
 - Python 3.6+
-- Tkinter (usually included with Python) - for GUI version
+- Tkinter (usually included with Python) - for GUI versions
+- Pillow (PIL) - for Mermaid GUI image display
 - Terminal with Unicode support (for best terminal experience)
+- Internet connection (for Mermaid diagram rendering via mermaid.ink)
 
 ---
 
-## Recent Changes (Latest Session)
+## Recent Changes (Latest Session - 2025-11-22)
 
-### Terminal Markdown Viewer
+### Mermaid GUI Viewer (NEW)
+- Implemented GUI Mermaid diagram viewer
+- Downloads and displays diagrams from mermaid.ink
+- Scrollable canvas for large diagrams
+- Loading message during fetch
+- Uses PIL/ImageTk for image display
+- Created `mermaid_viewer_gui.py` (105 lines)
+- Created `mermaid-viewer` launcher script
+
+### Desktop Integration (NEW)
+- Created `install-desktop-files.sh` installer
+- One-command file association setup
+- Auto-detects script directory (no hardcoded paths)
+- Creates `.desktop` files for both viewers
+- Updates desktop database automatically
+- Enables double-click to open `.md` and `.mmd` files
+
+### Previous Session Changes (2025-11-20)
+
+#### Terminal Markdown Viewer
 - Removed built-in pager in favor of user choice
 - Added `force_terminal=True` to preserve colors when piped
 - Launcher script auto-detects terminal output and pipes to `less -R`
 - Fixed ANSI escape sequence rendering in xterm-256color
 
-### Mermaid Diagram Viewer (NEW)
+#### Mermaid Terminal Viewer
 - Implemented terminal-based Mermaid viewer
 - Uses mermaid-py library for URL generation
 - Displays syntax-highlighted source code
@@ -103,12 +145,15 @@ mermaid-py>=0.4.0
 
 ## Git Status
 
-**Last Commit:** `65076ca` - Add Mermaid diagram viewer for terminal
+**Last Commit:** `6f6f2c0` - Add .desktop file installer for easy file association
 **Remote:** origin/main (up to date)
 **Untracked Files:** `junk` (not part of project)
 
 ### Recent Commit History
 ```
+6f6f2c0 - Add .desktop file installer for easy file association
+e42b59f - Add Mermaid GUI viewer - click to view diagrams
+f2b0abd - Add project checkpoint for future resumption
 65076ca - Add Mermaid diagram viewer for terminal
 7ea174f - Remove built-in pager, allow users to choose external pager
 36bd89d - Fix ANSI escape sequences in terminal viewer
@@ -125,6 +170,8 @@ mermaid-py>=0.4.0
 ```bash
 ./markdown-viewer sample_files/README.md
 python3 markdown_viewer.py sample_files/CHAT_PIPELINE_ARCHITECTURE.md
+
+# Or double-click any .md file (after running install-desktop-files.sh)
 ```
 
 ### Markdown Terminal Viewer
@@ -137,13 +184,31 @@ python3 markdown_viewer_term.py file.md | less -R
 python3 markdown_viewer_term.py file.md | more
 ```
 
-### Mermaid Diagram Viewer
+### Mermaid GUI Viewer
+```bash
+./mermaid-viewer sample_files/sample_flowchart.mmd
+./mermaid-viewer sample_files/sample_sequence.mmd
+
+# Or double-click any .mmd file (after running install-desktop-files.sh)
+```
+
+### Mermaid Terminal Viewer
 ```bash
 # View Mermaid source and get URLs
 ./mermaid-viewer-term sample_files/sample_flowchart.mmd
 
 # Download rendered diagram
 curl -o diagram.png "https://mermaid.ink/img/..."
+```
+
+### Desktop Integration
+```bash
+# One-time setup for file associations
+./install-desktop-files.sh
+
+# Now you can double-click:
+# - Any .md file → Opens in Markdown Viewer GUI
+# - Any .mmd file → Opens in Mermaid Diagram Viewer GUI
 ```
 
 ---
@@ -395,18 +460,21 @@ pyinstaller markdown-viewer.spec
 7. ✅ Committed and pushed all changes
 
 ### Code Statistics
-- **Total Python Files:** 3 (markdown_viewer.py, markdown_viewer_term.py, mermaid_viewer_term.py)
-- **Total Lines of Python:** ~370 lines
-- **Launcher Scripts:** 3 bash scripts
-- **Dependencies:** 3 Python packages
+- **Total Python Files:** 4 (markdown_viewer.py, markdown_viewer_term.py, mermaid_viewer_gui.py, mermaid_viewer_term.py)
+- **Total Lines of Python:** ~480 lines
+- **Launcher Scripts:** 4 bash scripts + 1 installer script
+- **Dependencies:** 4 Python packages (markdown, rich, mermaid-py, Pillow)
 - **Sample Files:** 15+ markdown files, 2 Mermaid files
+- **Desktop Integration:** 2 `.desktop` files (auto-generated)
 
 ### All Tests Passing
 - ✅ GUI markdown rendering (including ASCII art)
 - ✅ Terminal markdown rendering with colors
 - ✅ Pager integration (less -R)
-- ✅ Mermaid source highlighting
+- ✅ Mermaid GUI viewer (downloads and displays diagrams)
+- ✅ Mermaid terminal source highlighting
 - ✅ Mermaid URL generation
+- ✅ Desktop file installation
 
 ---
 
@@ -424,16 +492,34 @@ For issues or enhancements, see the repository's issue tracker.
 
 When resuming this project, consider:
 
-1. **Add Mermaid GUI viewer** - Create Tkinter version using embedded browser
-2. **Implement dark mode** - Toggle for GUI version
-3. **Add clickable links** - Open URLs in default browser
-4. **Local Mermaid rendering** - Optional mermaid-cli integration
-5. **Image support** - Display embedded images in markdown
+1. ✅ ~~**Add Mermaid GUI viewer**~~ - COMPLETED!
+2. ✅ ~~**Desktop file associations**~~ - COMPLETED!
+3. **Implement dark mode** - Toggle for GUI versions
+4. **Add clickable links** - Open URLs in default browser
+5. **Local Mermaid rendering** - Optional mermaid-cli integration for offline use
+6. **Image support** - Display embedded images in markdown
+7. **Export functionality** - Save as PDF or HTML
+8. **Find/search** - Text search within viewers
 
 **Start with:** Testing all viewers to ensure everything still works after environment changes.
 
 ---
 
-**Checkpoint Created:** 2025-11-20
+**Checkpoint Created:** 2025-11-22
+**Checkpoint Updated:** 2025-11-22
 **Ready to Resume:** Yes ✓
 **Repository Status:** Clean, all changes committed and pushed
+
+## Summary
+
+This project is now **feature complete** with:
+- ✅ 2 Markdown viewers (GUI + Terminal)
+- ✅ 2 Mermaid diagram viewers (GUI + Terminal)
+- ✅ Desktop integration for double-click file opening
+- ✅ All viewers tested and working
+- ✅ Complete documentation
+- ✅ Sample files included
+
+**Total viewers:** 4
+**Installation method:** One command (`./install-desktop-files.sh`)
+**Status:** Production ready
